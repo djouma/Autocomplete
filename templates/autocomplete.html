@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<title>Auto-complete service</title>
+
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" crossorigin="anonymous"></script>
+	<script>
+
+function sortByFrequencyAndRemoveDuplicates(array) {
+    var frequency = {}, value;
+	
+    //compute frequencies of each value
+    for(var i = 0; i < array.length; i++) {
+        value = array[i];
+        if(value in frequency) {
+            frequency[value]++;
+        }
+        else {
+            frequency[value] = 1;
+        }
+    }
+
+    //make array from the frequency object to de-duplicate
+    var uniques = [];
+    for(value in frequency) {
+        uniques.push(value);
+    }
+
+    //sort the uniques array in descending order by frequency
+    function compareFrequency(a, b) {
+        return frequency[b] - frequency[a];
+    }
+
+    return uniques.sort(compareFrequency);
+}
+		$(function() {
+			$("#searchBox").autocomplete({
+				
+				source : function(request, response) {
+					$.ajax({
+						type: "POST",
+						url : "http://localhost:5000/search",
+						dataType : "json",
+						cache: false,
+						data : {
+							q : request.term
+
+						},
+						success : function(data) {
+							
+							var res =sortByFrequencyAndRemoveDuplicates(data)
+							// alert(decodeURI(res))
+							response(res.slice(0,4));
+							console.log(res.slice(0,4))
+						},
+						error: function(jqXHR, textStatus, errorThrown) {
+							console.log(textStatus + " " + errorThrown);
+						}
+					});
+				},
+				minLength : 1
+			});
+		});
+	</script>
+</head>
+<body>
+	<form>
+	<div style="width: 600px; margin: auto;">
+		<h2>Auto-complete service</h2>
+		<p style="width: 560px; margin: auto;">
+			<input type="text" name="search" placeholder="Search here..." id="searchBox"/>
+		</p>
+	</div>
+	</form>
+
+</body>
+</html>
