@@ -9,22 +9,23 @@ def upload_form():
 
 @app.route('/search', methods=['POST'])
 def search():
-	
-	term = request.form["q"]
+	term = request.form['q']
 	print ('term: ', term)
 	
 	SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
 	json_url = os.path.join(SITE_ROOT, "data", "results.json")
 	json_data = json.loads(open(json_url).read())
 	
-	filtered_dict = [v for v in json_data if term.casefold() in v.casefold()]	
-	res = [key for key, value in Counter(filtered_dict).most_common()]
-	res = str(res[:4])
-	resp = jsonify(res)
+	#Suggestion search
+	filtered_dict = [v for v in json_data if term.casefold() in v.casefold()]
+	#Sort by frequency
+	filtered_dict = [key for key, value in Counter(filtered_dict).most_common()]
+	#Limit 4 
+	filtered_dict = filtered_dict[:4]
+	print(filtered_dict)
+	#Convert string to json
+	resp = jsonify(filtered_dict)
 	resp.status_code = 200
-	print(res)
 	return resp
-
-
 if __name__ == "__main__":
     app.run()

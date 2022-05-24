@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-	<title>Autocomplete input suggestion using Python and Flask</title>
+	<title>Auto-complete service</title>
 
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
@@ -19,9 +19,9 @@
 							q : request.term
 						},
 						success : function(data) {
-							//alert(data);
-							//console.log(data);
-							response(data);
+							//alert(data)
+							//console.log(data)
+							response(data)
 						},
 						error: function(jqXHR, textStatus, errorThrown) {
 							console.log(textStatus + " " + errorThrown);
